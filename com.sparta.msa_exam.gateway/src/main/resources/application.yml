@@ -14,6 +14,16 @@ spring:
           predicates:
             - Path=/auth/**
 
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/product/**
+
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/order/**
+
       discovery:
         locator:
           enabled: true
