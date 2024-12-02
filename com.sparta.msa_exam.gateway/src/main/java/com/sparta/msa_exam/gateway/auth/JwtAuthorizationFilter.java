@@ -45,7 +45,7 @@ public class JwtAuthorizationFilter implements GlobalFilter {
             return exchange.getResponse().setComplete();
         }
 
-        return chain.filter(addUserIdHeader(exchange, token));
+        return chain.filter(addUserInfoHeader(exchange, token));
     }
 
     private String getJwtFromHeader(ServerWebExchange exchange) {
@@ -74,9 +74,18 @@ public class JwtAuthorizationFilter implements GlobalFilter {
         return false;
     }
 
-    private String getUserIdFromToken(String token) {
-        Jws<Claims> claimsJws = getClaimsJws(token);
-        return String.valueOf(claimsJws.getBody().get("userId", Long.class));
+    private ServerWebExchange addUserInfoHeader(ServerWebExchange exchange, String token) {
+        String userId = getUserIdFromToken(token);
+        String username = getUsernameFromToken(token);
+        ServerHttpRequest req = exchange.getRequest()
+                .mutate()
+                .header("X-User-Id", userId)
+                .header("X-User-Name", username)
+                .build();
+
+        return exchange.mutate()
+                .request(req)
+                .build();
     }
 
     private Jws<Claims> getClaimsJws(String token) {
@@ -87,16 +96,14 @@ public class JwtAuthorizationFilter implements GlobalFilter {
                 .parseClaimsJws(token);
     }
 
-    private ServerWebExchange addUserIdHeader(ServerWebExchange exchange, String token) {
-        String userId = getUserIdFromToken(token);
-        ServerHttpRequest req = exchange.getRequest()
-                .mutate()
-                .header("X-User-Id", userId)
-                .build();
+    private String getUserIdFromToken(String token) {
+        Jws<Claims> claimsJws = getClaimsJws(token);
+        return String.valueOf(claimsJws.getBody().get("userId", Long.class));
+    }
 
-        return exchange.mutate()
-                .request(req)
-                .build();
+    private String getUsernameFromToken(String token) {
+        Jws<Claims> claimsJws = getClaimsJws(token);
+        return claimsJws.getBody().getSubject();
     }
 
 }
