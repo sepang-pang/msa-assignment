@@ -24,7 +24,7 @@ public class ResProductPostDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Product {
+    private static class Product {
 
         private Long id;
         private String name;
