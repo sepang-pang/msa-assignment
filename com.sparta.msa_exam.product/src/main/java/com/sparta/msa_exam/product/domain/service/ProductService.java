@@ -6,6 +6,7 @@ import com.sparta.msa_exam.product.domain.dto.res.ResProductGetDTO;
 import com.sparta.msa_exam.product.domain.dto.res.ResProductPostDTO;
 import com.sparta.msa_exam.product.model.entity.ProductEntity;
 import com.sparta.msa_exam.product.model.repository.ProductRepository;
+import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,19 @@ public class ProductService {
     @Transactional
     public ResponseEntity<ResDTO<ResProductPostDTO>> postBy(String username, ReqProductPostDTO dto) {
 
+        /*
+            중복 이름 검증
+            - 예외 커스텀 고려
+        */
+        productRepository.findByNameAndDeletedAtIsNull(dto.getProduct().getName())
+                .ifPresent(productEntity -> {
+                    throw new DuplicateRequestException("이미 존재하는 상품입니다.");
+                });
+
+
+       /*
+            상품 생성
+       */
         ProductEntity productEntity = productRepository.save(dto.getProduct().toEntityWith(username));
 
         return new ResponseEntity<>(
