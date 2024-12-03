@@ -2,6 +2,7 @@ package com.sparta.msa_exam.product.domain.service;
 
 import com.sparta.msa_exam.product.domain.dto.req.ReqProductPostDTO;
 import com.sparta.msa_exam.product.domain.dto.res.ResDTO;
+import com.sparta.msa_exam.product.domain.dto.res.ResProductForOrderDTO;
 import com.sparta.msa_exam.product.domain.dto.res.ResProductGetDTO;
 import com.sparta.msa_exam.product.domain.dto.res.ResProductPostDTO;
 import com.sparta.msa_exam.product.model.entity.ProductEntity;
@@ -15,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +67,11 @@ public class ProductService {
                         .build(),
                 HttpStatus.OK
         );
+    }
+
+    @Transactional(readOnly = true)
+    public ResProductForOrderDTO getBy(List<Long> productIds) {
+        return ResProductForOrderDTO.of(productRepository.findByIdInAndDeletedAtIsNull(productIds));
     }
 
 }

@@ -2,6 +2,7 @@ package com.sparta.msa_exam.product.domain.controller;
 
 import com.sparta.msa_exam.product.domain.dto.req.ReqProductPostDTO;
 import com.sparta.msa_exam.product.domain.dto.res.ResDTO;
+import com.sparta.msa_exam.product.domain.dto.res.ResProductForOrderDTO;
 import com.sparta.msa_exam.product.domain.dto.res.ResProductGetDTO;
 import com.sparta.msa_exam.product.domain.dto.res.ResProductPostDTO;
 import com.sparta.msa_exam.product.domain.service.ProductService;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,6 +44,11 @@ public class ProductController {
             @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         return productService.getBy(pageable);
+    }
+
+    @PostMapping("/details")
+    public ResProductForOrderDTO getBy(@RequestBody List<Long> productIds) {
+        return productService.getBy(productIds);
     }
 
 }
