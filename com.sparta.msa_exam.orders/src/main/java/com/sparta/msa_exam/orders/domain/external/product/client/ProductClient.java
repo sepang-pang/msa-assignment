@@ -1,7 +1,7 @@
-package com.sparta.msa_exam.orders.domain.external;
+package com.sparta.msa_exam.orders.domain.external.product.client;
 
-import com.sparta.msa_exam.orders.domain.dto.res.ResProductGetByIdDTO;
-import com.sparta.msa_exam.orders.domain.dto.res.ResProductGetDTO;
+import com.sparta.msa_exam.orders.domain.external.product.dto.res.ResProductGetByIdDTO;
+import com.sparta.msa_exam.orders.domain.external.product.dto.res.ResProductGetDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

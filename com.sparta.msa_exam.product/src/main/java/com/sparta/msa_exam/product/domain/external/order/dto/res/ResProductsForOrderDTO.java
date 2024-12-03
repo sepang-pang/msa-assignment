@@ -1,4 +1,4 @@
-package com.sparta.msa_exam.product.domain.dto.external;
+package com.sparta.msa_exam.product.domain.external.order.dto.res;
 
 import com.sparta.msa_exam.product.model.entity.ProductEntity;
 import lombok.AllArgsConstructor;
@@ -6,17 +6,19 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResProductForOderDTO {
+public class ResProductsForOrderDTO {
 
-    private Product product;
+    private List<Product> products;
 
-    public static ResProductForOderDTO of(ProductEntity productEntity) {
-        return ResProductForOderDTO.builder()
-                .product(Product.from(productEntity))
+    public static ResProductsForOrderDTO of(List<ProductEntity> productEntities) {
+        return ResProductsForOrderDTO.builder()
+                .products(Product.from(productEntities))
                 .build();
     }
 
@@ -24,10 +26,17 @@ public class ResProductForOderDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    private static class Product {
+    public static class Product {
+
         private Long productId;
         private String name;
         private int supplyPrice;
+
+        private static List<Product> from(List<ProductEntity> productEntities) {
+            return productEntities.stream()
+                    .map(Product::from)
+                    .toList();
+        }
 
         private static Product from(ProductEntity productEntity) {
             return Product.builder()

@@ -1,13 +1,15 @@
-package com.sparta.msa_exam.orders.domain.dto.res;
+package com.sparta.msa_exam.orders.domain.external.product.dto.res;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
-public class ResProductGetByIdDTO {
+public class ResProductGetDTO {
 
-    private Product product;
+    private List<Product> products;
 
     @Getter
     @NoArgsConstructor

@@ -1,7 +1,7 @@
 package com.sparta.msa_exam.product.domain.controller;
 
-import com.sparta.msa_exam.product.domain.dto.external.ResProductForOderDTO;
-import com.sparta.msa_exam.product.domain.dto.external.ResProductsForOrderDTO;
+import com.sparta.msa_exam.product.domain.external.order.dto.res.ResProductForOderDTO;
+import com.sparta.msa_exam.product.domain.external.order.dto.res.ResProductsForOrderDTO;
 import com.sparta.msa_exam.product.domain.dto.req.ReqProductPostDTO;
 import com.sparta.msa_exam.product.domain.dto.res.*;
 import com.sparta.msa_exam.product.domain.service.ProductService;
