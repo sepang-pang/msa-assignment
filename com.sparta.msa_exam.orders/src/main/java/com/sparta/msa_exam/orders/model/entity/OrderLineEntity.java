@@ -43,4 +43,11 @@ public class OrderLineEntity {
     public void updateOrderEntity(OrderEntity orderEntity) {
         this.orderEntity = orderEntity;
     }
+
+    // == 수량 추가 메서드 == //
+    public void updateCount(int additionalCount) {
+        int unitPrice = this.supplyPrice / this.count;
+        this.count += additionalCount;
+        this.supplyPrice += unitPrice * additionalCount;
+    }
 }

@@ -10,6 +10,7 @@ import com.sparta.msa_exam.orders.model.repository.OrderLineRepository;
 import com.sparta.msa_exam.orders.model.repository.OrderRepository;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -95,13 +96,16 @@ public class OrderService {
             throw new IllegalArgumentException("접근 권한이 없습니다.");
         }
 
-        /*
-            FIXME: 동일한 Product 가 존재하면, feign X
-        */
-
-        ResProductGetByIdDTO clientBy = productClient.getBy(dto.getProduct().getProductId());
-
-        orderEntity.addOrderLienEntity(dto.getProduct().toEntityWith(clientBy.getProduct().getSupplyPrice()));
+        orderLineRepository.findByProductId(dto.getProduct().getProductId())
+                .ifPresentOrElse(
+                        orderLineEntity -> {
+                            orderLineEntity.updateCount(dto.getProduct().getCount());
+                        },
+                        () -> {
+                            ResProductGetByIdDTO clientBy = productClient.getBy(dto.getProduct().getProductId());
+                            orderEntity.addOrderLienEntity(dto.getProduct().toEntityWith(clientBy.getProduct().getSupplyPrice()));
+                        }
+                );
 
         return new ResponseEntity<>(
                 ResDTO.builder()
