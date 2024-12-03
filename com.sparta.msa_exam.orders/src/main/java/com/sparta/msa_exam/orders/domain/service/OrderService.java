@@ -1,15 +1,13 @@
 package com.sparta.msa_exam.orders.domain.service;
 
 import com.sparta.msa_exam.orders.domain.dto.req.ReqOrderPostDTO;
-import com.sparta.msa_exam.orders.domain.dto.res.ResDTO;
-import com.sparta.msa_exam.orders.domain.dto.res.ResOrderGetByUserIdDTO;
-import com.sparta.msa_exam.orders.domain.dto.res.ResOrderPostDTO;
-import com.sparta.msa_exam.orders.domain.dto.res.ResProductGetDTO;
+import com.sparta.msa_exam.orders.domain.dto.res.*;
 import com.sparta.msa_exam.orders.domain.external.ProductClient;
 import com.sparta.msa_exam.orders.model.entity.OrderEntity;
 import com.sparta.msa_exam.orders.model.entity.OrderLineEntity;
 import com.sparta.msa_exam.orders.model.repository.OrderLineRepository;
 import com.sparta.msa_exam.orders.model.repository.OrderRepository;
+import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -72,6 +70,26 @@ public class OrderService {
                         .build(),
                 HttpStatus.OK
         );
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<ResDTO<ResOrderGetByIdDTO>> getBy(Long oderId) {
+
+        OrderEntity orderEntity = getOrderEntity(oderId);
+
+        return new ResponseEntity<>(
+                ResDTO.<ResOrderGetByIdDTO>builder()
+                        .code(HttpStatus.OK.value())
+                        .message("주문 조회에 성공했습니다.")
+                        .data(ResOrderGetByIdDTO.of(orderEntity))
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
+    private OrderEntity getOrderEntity(Long oderId) {
+        return orderRepository.findByIdAndDeletedAtIsNull(oderId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 항목입니다."));
     }
 
     private static Map<Long, Integer> getMap(ResProductGetDTO clientBy) {

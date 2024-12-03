@@ -2,6 +2,7 @@ package com.sparta.msa_exam.orders.domain.controller;
 
 import com.sparta.msa_exam.orders.domain.dto.req.ReqOrderPostDTO;
 import com.sparta.msa_exam.orders.domain.dto.res.ResDTO;
+import com.sparta.msa_exam.orders.domain.dto.res.ResOrderGetByIdDTO;
 import com.sparta.msa_exam.orders.domain.dto.res.ResOrderGetByUserIdDTO;
 import com.sparta.msa_exam.orders.domain.dto.res.ResOrderPostDTO;
 import com.sparta.msa_exam.orders.domain.service.OrderService;
@@ -32,5 +33,11 @@ public class OrderController {
                                                                 @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         return orderService.getBy(userId, pageable);
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<ResDTO<ResOrderGetByIdDTO>> getBy(@PathVariable("orderId") Long oderId) {
+
+        return orderService.getBy(oderId);
     }
 }
