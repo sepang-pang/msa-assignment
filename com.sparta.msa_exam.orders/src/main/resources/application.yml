@@ -24,4 +24,4 @@ eureka:
       defaultZone: http://localhost:19090/eureka/
 
 server:
-  port: 19091
+  port: 19092
