@@ -13,9 +13,9 @@ import java.util.List;
 @FeignClient(name = "product-service")
 public interface ProductClient {
 
-    @PostMapping("/product/details")
+    @PostMapping("/products/details")
     ResProductGetDTO getBy(@RequestBody List<Long> productIds);
 
-    @GetMapping("/product/{productId}")
+    @GetMapping("/products/details/{productId}")
     ResProductGetByIdDTO getBy(@PathVariable(name = "productId") Long productId);
 }

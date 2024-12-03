@@ -1,5 +1,7 @@
 package com.sparta.msa_exam.product.domain.controller;
 
+import com.sparta.msa_exam.product.domain.dto.external.ResProductForOderDTO;
+import com.sparta.msa_exam.product.domain.dto.external.ResProductsForOrderDTO;
 import com.sparta.msa_exam.product.domain.dto.req.ReqProductPostDTO;
 import com.sparta.msa_exam.product.domain.dto.res.*;
 import com.sparta.msa_exam.product.domain.service.ProductService;
@@ -16,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j(topic = "ProductController Log")
-@RequestMapping("/product")
+@RequestMapping("/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -44,12 +46,12 @@ public class ProductController {
     }
 
     @PostMapping("/details")
-    public ResProductForOrderDTO getBy(@RequestBody List<Long> productIds) {
+    public ResProductsForOrderDTO getBy(@RequestBody List<Long> productIds) {
         return productService.getBy(productIds);
     }
 
-    @GetMapping("/{productId}")
-    public ResProductForOderDTOV2 getBy(@PathVariable("productId") Long productId) {
+    @GetMapping("/details/{productId}")
+    public ResProductForOderDTO getBy(@PathVariable("productId") Long productId) {
         return productService.getBy(productId);
     }
 
