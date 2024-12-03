@@ -3,6 +3,7 @@ package com.sparta.msa_exam.orders.model.entity;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,9 +25,19 @@ public class OrderLineEntity {
     @Column(name = "count", nullable = false)
     private int count;
 
+    @Column(name = "supply_price", nullable = false)
+    private int supplyPrice;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "order_id")
     private OrderEntity orderEntity;
+
+    @Builder
+    public OrderLineEntity(Long productId, int count, int supplyPrice) {
+        this.productId = productId;
+        this.count = count;
+        this.supplyPrice = supplyPrice;
+    }
 
     // == 연관관계 메서드 == //
     public void updateOrderEntity(OrderEntity orderEntity) {
