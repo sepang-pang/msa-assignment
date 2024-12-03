@@ -5,7 +5,7 @@ import com.sparta.msa_exam.orders.domain.dto.req.ReqOrderPutDTO;
 import com.sparta.msa_exam.orders.domain.dto.res.*;
 import com.sparta.msa_exam.orders.domain.external.product.client.ProductClient;
 import com.sparta.msa_exam.orders.domain.external.product.dto.res.ResProductGetByIdDTO;
-import com.sparta.msa_exam.orders.domain.external.product.dto.res.ResProductGetDTO;
+import com.sparta.msa_exam.orders.domain.external.product.dto.res.ResProductGetByIdsDTO;
 import com.sparta.msa_exam.orders.model.entity.OrderEntity;
 import com.sparta.msa_exam.orders.model.entity.OrderLineEntity;
 import com.sparta.msa_exam.orders.model.repository.OrderLineRepository;
@@ -42,7 +42,7 @@ public class OrderService {
                    유효성을 검증하고, 반환받은 사용자 정보를 사용해 `username`을 삽입하도록 수정할 예정.
         */
 
-        ResProductGetDTO clientBy = productClient.getBy(getIds(dto));
+        ResProductGetByIdsDTO clientBy = productClient.getBy(getIds(dto));
 
         Map<Long, Integer> supplyPriceMap = getMap(clientBy);
 
@@ -122,12 +122,12 @@ public class OrderService {
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 항목입니다."));
     }
 
-    private static Map<Long, Integer> getMap(ResProductGetDTO clientBy) {
+    private static Map<Long, Integer> getMap(ResProductGetByIdsDTO clientBy) {
         return clientBy.getProducts()
                 .stream()
                 .collect(Collectors.toMap(
-                        ResProductGetDTO.Product::getProductId,
-                        ResProductGetDTO.Product::getSupplyPrice
+                        ResProductGetByIdsDTO.Product::getProductId,
+                        ResProductGetByIdsDTO.Product::getSupplyPrice
                 ));
     }
 

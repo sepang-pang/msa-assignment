@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class ResProductGetDTO {
+public class ResProductGetByIdsDTO {
 
     private List<Product> products;
 
