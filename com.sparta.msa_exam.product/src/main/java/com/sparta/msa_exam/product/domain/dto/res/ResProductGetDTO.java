@@ -25,7 +25,6 @@ public class ResProductGetDTO {
                 .build();
     }
 
-    @Getter
     private static class ProductPage extends PagedModel<ProductPage.Product> {
         public ProductPage(Page<ProductEntity> productPage) {
             super(
