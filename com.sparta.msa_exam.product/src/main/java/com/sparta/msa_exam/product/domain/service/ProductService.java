@@ -1,13 +1,11 @@
 package com.sparta.msa_exam.product.domain.service;
 
 import com.sparta.msa_exam.product.domain.dto.req.ReqProductPostDTO;
-import com.sparta.msa_exam.product.domain.dto.res.ResDTO;
-import com.sparta.msa_exam.product.domain.dto.res.ResProductForOrderDTO;
-import com.sparta.msa_exam.product.domain.dto.res.ResProductGetDTO;
-import com.sparta.msa_exam.product.domain.dto.res.ResProductPostDTO;
+import com.sparta.msa_exam.product.domain.dto.res.*;
 import com.sparta.msa_exam.product.model.entity.ProductEntity;
 import com.sparta.msa_exam.product.model.repository.ProductRepository;
 import com.sun.jdi.request.DuplicateRequestException;
+import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -72,6 +70,12 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ResProductForOrderDTO getBy(List<Long> productIds) {
         return ResProductForOrderDTO.of(productRepository.findByIdInAndDeletedAtIsNull(productIds));
+    }
+
+    @Transactional(readOnly = true)
+    public ResProductForOderDTOV2 getBy(Long productId) {
+        return ResProductForOderDTOV2.of(productRepository.findByIdAndDeletedAtIsNull(productId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 항목입니다.")));
     }
 
 }

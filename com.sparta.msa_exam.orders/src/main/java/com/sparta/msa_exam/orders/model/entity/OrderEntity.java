@@ -70,4 +70,9 @@ public class OrderEntity {
         this.orderLineEntities.addAll(orderLineEntities);
         orderLineEntities.forEach(orderLineEntity -> orderLineEntity.updateOrderEntity(this));
     }
+
+    public void addOrderLienEntity(OrderLineEntity orderLineEntity) {
+        this.orderLineEntities.add(orderLineEntity);
+        orderLineEntity.updateOrderEntity(this);
+    }
 }

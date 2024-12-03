@@ -1,6 +1,7 @@
 package com.sparta.msa_exam.orders.domain.service;
 
 import com.sparta.msa_exam.orders.domain.dto.req.ReqOrderPostDTO;
+import com.sparta.msa_exam.orders.domain.dto.req.ReqOrderPutDTO;
 import com.sparta.msa_exam.orders.domain.dto.res.*;
 import com.sparta.msa_exam.orders.domain.external.ProductClient;
 import com.sparta.msa_exam.orders.model.entity.OrderEntity;
@@ -37,6 +38,11 @@ public class OrderService {
             FIXME: 현재는 `username`을 직접 파라미터로 받아서 엔티티에 삽입하고 있으나,
                    추후에는 `userId` 를 통해 Auth 도메인(FEIGN Client)을 호출하여
                    유효성을 검증하고, 반환받은 사용자 정보를 사용해 `username`을 삽입하도록 수정할 예정.
+        */
+
+        /*
+            FIXME: 현재는 Product 를 한 번에 가져오고 있음.
+                   개별 요청 방식으로 변경 후 존재하는 상품만 목록에 저장할 수 있도록 환경 구축 필요
         */
 
         List<Long> productIds = getIds(dto);
@@ -82,6 +88,32 @@ public class OrderService {
                         .code(HttpStatus.OK.value())
                         .message("주문 조회에 성공했습니다.")
                         .data(ResOrderGetByIdDTO.of(orderEntity))
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
+    @Transactional
+    public ResponseEntity<ResDTO<Object>> putBy(Long userId, Long orderId, ReqOrderPutDTO dto) {
+
+        OrderEntity orderEntity = getOrderEntity(orderId);
+
+        if (!orderEntity.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("접근 권한이 없습니다.");
+        }
+
+        /*
+            FIXME: 동일한 Product 가 존재하면, feign X
+        */
+
+        ResProductGetByIdDTO clientBy = productClient.getBy(dto.getProduct().getProductId());
+
+        orderEntity.addOrderLienEntity(dto.getProduct().toEntityWith(clientBy.getProduct().getSupplyPrice()));
+
+        return new ResponseEntity<>(
+                ResDTO.builder()
+                        .code(HttpStatus.OK.value())
+                        .message("주문 추가에 성공하였습니다.")
                         .build(),
                 HttpStatus.OK
         );

@@ -1,10 +1,7 @@
 package com.sparta.msa_exam.product.domain.controller;
 
 import com.sparta.msa_exam.product.domain.dto.req.ReqProductPostDTO;
-import com.sparta.msa_exam.product.domain.dto.res.ResDTO;
-import com.sparta.msa_exam.product.domain.dto.res.ResProductForOrderDTO;
-import com.sparta.msa_exam.product.domain.dto.res.ResProductGetDTO;
-import com.sparta.msa_exam.product.domain.dto.res.ResProductPostDTO;
+import com.sparta.msa_exam.product.domain.dto.res.*;
 import com.sparta.msa_exam.product.domain.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +46,11 @@ public class ProductController {
     @PostMapping("/details")
     public ResProductForOrderDTO getBy(@RequestBody List<Long> productIds) {
         return productService.getBy(productIds);
+    }
+
+    @GetMapping("/{productId}")
+    public ResProductForOderDTOV2 getBy(@PathVariable("productId") Long productId) {
+        return productService.getBy(productId);
     }
 
 }

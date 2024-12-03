@@ -1,6 +1,7 @@
 package com.sparta.msa_exam.orders.domain.controller;
 
 import com.sparta.msa_exam.orders.domain.dto.req.ReqOrderPostDTO;
+import com.sparta.msa_exam.orders.domain.dto.req.ReqOrderPutDTO;
 import com.sparta.msa_exam.orders.domain.dto.res.ResDTO;
 import com.sparta.msa_exam.orders.domain.dto.res.ResOrderGetByIdDTO;
 import com.sparta.msa_exam.orders.domain.dto.res.ResOrderGetByUserIdDTO;
@@ -40,4 +41,13 @@ public class OrderController {
 
         return orderService.getBy(oderId);
     }
+
+    @PutMapping("/{orderId}")
+    public ResponseEntity<ResDTO<Object>> putBy(@RequestHeader("X-User-Id") Long userId,
+                                                @PathVariable("orderId") Long oderId,
+                                                @RequestBody ReqOrderPutDTO dto) {
+
+        return orderService.putBy(userId, oderId, dto);
+    }
+
 }
