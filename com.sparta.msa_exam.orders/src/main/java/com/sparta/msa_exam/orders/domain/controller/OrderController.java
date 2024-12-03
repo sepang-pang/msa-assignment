@@ -21,6 +21,10 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    /*
+        TODO: USER 만 주문 가능
+              USER 접근 권한 추가 필요
+    */
     @PostMapping
     public ResponseEntity<ResDTO<ResOrderPostDTO>> postBy(@RequestHeader("X-User-Id") Long userId,
                                                           @RequestHeader("X-User-Name") String username,
@@ -42,6 +46,10 @@ public class OrderController {
         return orderService.getBy(oderId);
     }
 
+    /*
+        TODO: 수정은 ADMIN 과 본인만 가능
+              ADMIN 접근 권한 추가 필요
+    */
     @PutMapping("/{orderId}")
     public ResponseEntity<ResDTO<Object>> putBy(@RequestHeader("X-User-Id") Long userId,
                                                 @PathVariable("orderId") Long oderId,
