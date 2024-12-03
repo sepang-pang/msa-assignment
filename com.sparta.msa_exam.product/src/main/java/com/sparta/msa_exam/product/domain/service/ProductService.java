@@ -1,9 +1,11 @@
 package com.sparta.msa_exam.product.domain.service;
 
+import com.sparta.msa_exam.product.domain.dto.req.ReqProductPostDTO;
+import com.sparta.msa_exam.product.domain.dto.res.ResDTO;
+import com.sparta.msa_exam.product.domain.dto.res.ResProductGetDTO;
+import com.sparta.msa_exam.product.domain.dto.res.ResProductPostDTO;
 import com.sparta.msa_exam.product.domain.external.order.dto.res.ResProductForOderDTO;
 import com.sparta.msa_exam.product.domain.external.order.dto.res.ResProductsForOrderDTO;
-import com.sparta.msa_exam.product.domain.dto.req.ReqProductPostDTO;
-import com.sparta.msa_exam.product.domain.dto.res.*;
 import com.sparta.msa_exam.product.model.entity.ProductEntity;
 import com.sparta.msa_exam.product.model.repository.ProductRepository;
 import com.sun.jdi.request.DuplicateRequestException;
@@ -71,7 +73,21 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ResProductsForOrderDTO getBy(List<Long> productIds) {
-        return ResProductsForOrderDTO.of(productRepository.findByIdInAndDeletedAtIsNull(productIds));
+        List<ProductEntity> productEntities = productRepository.findByIdInAndDeletedAtIsNull(productIds);
+
+        /*
+             XXX:
+              1. 재고 체크를 Product 에서 수행할 것인가, Order 에서 수행할 것인가에 대한 고민 중
+              2. 재고 부족 발생 시 "OutOfStockException" 라는 커스텀 예외 클래스를 만드는 것을 고려해볼만 함 (현재는 임시로 예외 설정하였음)
+        */
+
+        for (ProductEntity productEntity : productEntities) {
+            if (productEntity.getQuantity() < 0) {
+                throw new IllegalArgumentException("상품 재고가 부족합니다.");
+            }
+        }
+
+        return ResProductsForOrderDTO.of(productEntities);
     }
 
     @Transactional(readOnly = true)
