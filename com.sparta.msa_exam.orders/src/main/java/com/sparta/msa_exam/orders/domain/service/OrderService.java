@@ -40,14 +40,7 @@ public class OrderService {
                    유효성을 검증하고, 반환받은 사용자 정보를 사용해 `username`을 삽입하도록 수정할 예정.
         */
 
-        /*
-            FIXME: 현재는 Product 를 한 번에 가져오고 있음.
-                   개별 요청 방식으로 변경 후 존재하는 상품만 목록에 저장할 수 있도록 환경 구축 필요
-        */
-
-        List<Long> productIds = getIds(dto);
-
-        ResProductGetDTO clientBy = productClient.getBy(productIds);
+        ResProductGetDTO clientBy = productClient.getBy(getIds(dto));
 
         Map<Long, Integer> supplyPriceMap = getMap(clientBy);
 

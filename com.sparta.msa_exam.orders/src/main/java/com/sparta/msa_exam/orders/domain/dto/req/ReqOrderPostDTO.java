@@ -24,8 +24,9 @@ public class ReqOrderPostDTO {
                 .username(username)
                 .orderLineEntities(
                         productList.stream()
-                        .map(product -> product.from(supplyPriceMap.get(product.getProductId())))
-                        .toList())
+                                .filter(product -> supplyPriceMap.get(product.getProductId()) != null)
+                                .map(product -> product.from(supplyPriceMap.get(product.getProductId())))
+                                .toList())
                 .build();
     }
 
