@@ -10,6 +10,7 @@ import com.sparta.msa_exam.orders.model.entity.OrderEntity;
 import com.sparta.msa_exam.orders.model.entity.OrderLineEntity;
 import com.sparta.msa_exam.orders.model.repository.OrderLineRepository;
 import com.sparta.msa_exam.orders.model.repository.OrderRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ public class OrderService {
 
 
     @Transactional
+    @CircuitBreaker(name = "orderService", fallbackMethod = "handleOrderPostFailure")
     public ResponseEntity<ResDTO<ResOrderPostDTO>> postBy(Long userId, String username, ReqOrderPostDTO dto) {
 
         /*
@@ -55,6 +57,22 @@ public class OrderService {
                         .data(ResOrderPostDTO.of(orderEntity))
                         .build(),
                 HttpStatus.OK
+        );
+    }
+
+    public ResponseEntity<ResDTO<Object>> handleOrderPostFailure(Long userId, String username, ReqOrderPostDTO dto, Throwable t) {
+        return new ResponseEntity<>(
+                ResDTO.builder()
+                        .code(HttpStatus.SERVICE_UNAVAILABLE.value())
+                        .message("주문 처리에 실패했습니다. 잠시 후 다시 시도해주세요.")
+                        .data(ResOrderFailureDTO.of(
+                                t.getLocalizedMessage(),
+                                userId,
+                                username,
+                                dto
+                        ))
+                        .build(),
+                HttpStatus.SERVICE_UNAVAILABLE
         );
     }
 
