@@ -2,12 +2,17 @@ package com.sparta.msa_exam.orders.domain.service;
 
 import com.sparta.msa_exam.orders.domain.dto.req.ReqOrderPostDTO;
 import com.sparta.msa_exam.orders.domain.dto.res.ResDTO;
+import com.sparta.msa_exam.orders.domain.dto.res.ResOrderGetByUserIdDTO;
 import com.sparta.msa_exam.orders.domain.dto.res.ResOrderPostDTO;
 import com.sparta.msa_exam.orders.domain.dto.res.ResProductGetDTO;
 import com.sparta.msa_exam.orders.domain.external.ProductClient;
 import com.sparta.msa_exam.orders.model.entity.OrderEntity;
+import com.sparta.msa_exam.orders.model.entity.OrderLineEntity;
+import com.sparta.msa_exam.orders.model.repository.OrderLineRepository;
 import com.sparta.msa_exam.orders.model.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,8 +26,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private final OrderRepository orderRepository;
     private final ProductClient productClient;
+    private final OrderRepository orderRepository;
+    private final OrderLineRepository orderLineRepository;
+
 
     @Transactional
     public ResponseEntity<ResDTO<ResOrderPostDTO>> postBy(Long userId, String username, ReqOrderPostDTO dto) {
@@ -52,6 +59,21 @@ public class OrderService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public ResponseEntity<ResDTO<ResOrderGetByUserIdDTO>> getBy(Long userId, Pageable pageable) {
+
+        Page<OrderEntity> orderEntityPage = orderRepository.findByUserIdAndDeletedAtIsNull(userId, pageable);
+
+        return new ResponseEntity<>(
+                ResDTO.<ResOrderGetByUserIdDTO>builder()
+                        .code(HttpStatus.OK.value())
+                        .message("주문 조회에 성공하였습니다.")
+                        .data(ResOrderGetByUserIdDTO.of(orderEntityPage, getMap(orderEntityPage)))
+                        .build(),
+                HttpStatus.OK
+        );
+    }
+
     private static Map<Long, Integer> getMap(ResProductGetDTO clientBy) {
         return clientBy.getProducts()
                 .stream()
@@ -61,9 +83,24 @@ public class OrderService {
                 ));
     }
 
+    private Map<Long, List<OrderLineEntity>> getMap(Page<OrderEntity> orderEntityPage) {
+        List<Long> ids = getIds(orderEntityPage);
+
+        List<OrderLineEntity> orderLineEntities = orderLineRepository.findByOrderEntityIdIn(ids);
+
+        return orderLineEntities.stream()
+                .collect(Collectors.groupingBy(orderLineEntity -> orderLineEntity.getOrderEntity().getId()));
+    }
+
     private static List<Long> getIds(ReqOrderPostDTO dto) {
         return dto.getProductList().stream()
                 .map(ReqOrderPostDTO.Product::getProductId)
+                .toList();
+    }
+
+    private static List<Long> getIds(Page<OrderEntity> orderEntityPage) {
+        return orderEntityPage.getContent().stream()
+                .map(OrderEntity::getId)
                 .toList();
     }
 }
