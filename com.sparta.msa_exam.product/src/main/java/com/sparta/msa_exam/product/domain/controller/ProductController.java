@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +25,7 @@ public class ProductController {
     private final ProductService productService;
 
     /*
-        상품 생성
-        - Owner 접근 권한 처리 예정
+        TODO : Owner 접근 권한 처리 필요
     */
     @PostMapping
     public ResponseEntity<ResDTO<ResProductPostDTO>> postBy(@RequestHeader("X-User-Name") String username,
@@ -34,9 +34,7 @@ public class ProductController {
     }
 
     /*
-        상품 전체 조회
-        - 로그인 유무에 따른 반환 처리 고려
-        - 가격 및 이름에 따른 동적 쿼리 구현 고려
+        TODO : 가격 및 이름에 따른 동적 쿼리 구현 고려
     */
     @GetMapping
     public ResponseEntity<ResDTO<ResProductGetDTO>> getBy(
@@ -53,6 +51,11 @@ public class ProductController {
     @GetMapping("/details/{productId}")
     public ResProductForOderDTO getBy(@PathVariable("productId") Long productId) {
         return productService.getBy(productId);
+    }
+
+    @PutMapping("/reduce-quantity")
+    public void reduceBy(@RequestBody Map<Long, Integer> productIdToQuantityMap) {
+        productService.reduceBy(productIdToQuantityMap);
     }
 
 }

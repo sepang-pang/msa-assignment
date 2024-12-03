@@ -38,17 +38,22 @@ public class OrderService {
     public ResponseEntity<ResDTO<ResOrderPostDTO>> postBy(Long userId, String username, ReqOrderPostDTO dto) {
 
         /*
-            TODO: 상품 재고 검증 하기
             FIXME: 현재는 `username`을 직접 파라미터로 받아서 엔티티에 삽입하고 있으나,
                    추후에는 `userId` 를 통해 Auth 도메인(FEIGN Client)을 호출하여
                    유효성을 검증하고, 반환받은 사용자 정보를 사용해 `username`을 삽입하도록 수정할 예정.
+
+            TODO: 동시성 이슈 관련 Lock 설정이 필요하다. (= Redisson 도입)
         */
 
         ResProductGetByIdsDTO clientBy = productClient.getBy(getIds(dto));
 
-        Map<Long, Integer> supplyPriceMap = getMap(clientBy);
+        productClient.reduceBy(dto.getProductList().stream()
+                .collect(Collectors.toMap(
+                        ReqOrderPostDTO.Product::getProductId,
+                        ReqOrderPostDTO.Product::getCount
+                )));
 
-        OrderEntity orderEntity = orderRepository.save(dto.toEntityWith(userId, username, supplyPriceMap));
+        OrderEntity orderEntity = orderRepository.save(dto.toEntityWith(userId, username, getMap(clientBy)));
 
         return new ResponseEntity<>(
                 ResDTO.<ResOrderPostDTO>builder()

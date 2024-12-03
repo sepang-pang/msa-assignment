@@ -61,4 +61,8 @@ public class ProductEntity {
         this.createdBy = username;
         this.modifiedBy = username;
     }
+
+    public void reduceQuantity(int count) {
+        this.quantity -= count;
+    }
 }

@@ -19,7 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -82,7 +84,7 @@ public class ProductService {
         */
 
         for (ProductEntity productEntity : productEntities) {
-            if (productEntity.getQuantity() < 0) {
+            if (productEntity.getQuantity() <= 0) {
                 throw new IllegalArgumentException("상품 재고가 부족합니다.");
             }
         }
@@ -94,6 +96,16 @@ public class ProductService {
     public ResProductForOderDTO getBy(Long productId) {
         return ResProductForOderDTO.of(productRepository.findByIdAndDeletedAtIsNull(productId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 항목입니다.")));
+    }
+
+    @Transactional
+    public void reduceBy(Map<Long, Integer> productIdToQuantityMap) {
+        List<ProductEntity> productEntities = productRepository
+                .findByIdInAndDeletedAtIsNull(new ArrayList<>(productIdToQuantityMap.keySet()));
+
+        productEntities.forEach(productEntity ->
+                productEntity.reduceQuantity(productIdToQuantityMap.get(productEntity.getId()))
+        );
     }
 
 }
