@@ -1,5 +1,7 @@
 package com.sparta.msa_exam.product.domain.service;
 
+import com.sparta.msa_exam.product.domain.dto.external.ResProductForOderDTO;
+import com.sparta.msa_exam.product.domain.dto.external.ResProductsForOrderDTO;
 import com.sparta.msa_exam.product.domain.dto.req.ReqProductPostDTO;
 import com.sparta.msa_exam.product.domain.dto.res.*;
 import com.sparta.msa_exam.product.model.entity.ProductEntity;
@@ -68,13 +70,13 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public ResProductForOrderDTO getBy(List<Long> productIds) {
-        return ResProductForOrderDTO.of(productRepository.findByIdInAndDeletedAtIsNull(productIds));
+    public ResProductsForOrderDTO getBy(List<Long> productIds) {
+        return ResProductsForOrderDTO.of(productRepository.findByIdInAndDeletedAtIsNull(productIds));
     }
 
     @Transactional(readOnly = true)
-    public ResProductForOderDTOV2 getBy(Long productId) {
-        return ResProductForOderDTOV2.of(productRepository.findByIdAndDeletedAtIsNull(productId)
+    public ResProductForOderDTO getBy(Long productId) {
+        return ResProductForOderDTO.of(productRepository.findByIdAndDeletedAtIsNull(productId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 항목입니다.")));
     }
 
