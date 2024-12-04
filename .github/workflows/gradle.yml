@@ -28,12 +28,20 @@ jobs:
       - name: Get list of modified services
         id: changes
         run: |
-          # git diff를 사용하여 수정된 디렉토리(서비스)를 찾습니다.
-          changes=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '/gradlew' | cut -d/ -f1 | sort -u)
+          # git diff를 사용하여 수정된 파일 목록을 가져옵니다.
+          echo "Checking for modified files..."
+          modified_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "Modified files:"
+          echo "$modified_files"
+          
+          # gradlew가 있는 디렉토리만 추출하여 서비스 목록을 만듭니다.
+          changes=$(echo "$modified_files" | grep '/gradlew' | cut -d/ -f1 | sort -u)
+          
+          # 디버깅 출력
           echo "Modified services: $changes"
+          
+          # GitHub Actions에서 사용할 수 있도록 output 설정
           echo "::set-output name=changed-services::$changes"
-        # 어떤 서비스(gradlew 파일이 있는 디렉토리)가 수정되었는지 확인합니다.
-        # 수정된 서비스 목록은 `changed-services`로 저장됩니다.
 
       - name: Display changed services
         run: |
