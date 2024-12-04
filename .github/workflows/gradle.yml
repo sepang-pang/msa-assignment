@@ -23,12 +23,14 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
-      # gradle 실행 허가
-      - name: Run chmod to make gradlew executable
-        run: chmod +x ./gradlew
+      - name: Build All Services
+        run: |
+          for service in com.sparta.msa_exam.*; do
+            if [ -f "$service/gradlew" ]; then
+              echo "Building $service"
+              chmod +x $service/gradlew
+              $service/gradlew build -x test -p $service
+            fi
+          done
 
-      # Bulid Test
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
-        with:
-          arguments: build -x test # 테스트 생략
+  
