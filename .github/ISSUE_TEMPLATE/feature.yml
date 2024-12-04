@@ -2,6 +2,15 @@ name: "✨ Feature"
 description: "작업 사항을 입력해주세요"
 title: "✨ [Feature] "
 body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 📄 설명  
+        새로운 기능에 대한 설명을 작성해 주세요.  
+        자세히 적을수록 좋습니다!
+
+        ---
+
   - type: textarea
     attributes:
       label: "📄 설명"
@@ -9,6 +18,19 @@ body:
       placeholder: "자세히 적을수록 좋습니다!"
     validations:
       required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## ✅ 작업할 내용  
+        할 일을 체크박스 형태로 작성해주세요.  
+        최대한 세분화해서 적어주세요!
+
+        - [ ] 작업 1  
+        - [ ] 작업 2  
+        - [ ] 작업 3  
+
+        ---
 
   - type: textarea
     attributes:
@@ -18,6 +40,14 @@ body:
     validations:
       required: true
 
+  - type: markdown
+    attributes:
+      value: |
+        ## 🙋🏻 참고 자료  
+        참고 자료가 있다면 작성해 주세요.
+
+        ---
+        
   - type: textarea
     attributes:
       label: "🙋🏻 참고 자료"
